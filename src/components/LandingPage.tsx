@@ -12,6 +12,13 @@ import Scene3D from "@/components/Scene3D";
 import ParticlesBackground from "@/components/ParticlesBackground";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface PageContent {
   headerTitle: string;
