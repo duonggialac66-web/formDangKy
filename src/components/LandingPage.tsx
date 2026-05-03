@@ -45,11 +45,13 @@ export default function LandingPageClient() {
   const [content, setContent] = useState<PageContent>(defaultContent);
   const [formData, setFormData] = useState({
     fullName: "",
+    companyName: "",
     email: "",
     phone: "",
     motivation: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   useEffect(() => {
     // Load page content from API (server database)
@@ -77,9 +79,10 @@ export default function LandingPageClient() {
       });
 
       if (res.ok) {
-        toast.success("Đăng ký thành công! Chúng tôi sẽ liên hệ với bạn sớm.");
+        setShowSuccessDialog(true);
         setFormData({
           fullName: "",
+          companyName: "",
           email: "",
           phone: "",
           motivation: ""
@@ -310,6 +313,17 @@ export default function LandingPageClient() {
                 </div>
 
                 <div>
+                  <Label htmlFor="companyName" className="text-gray-200">Tên doanh nghiệp (Nếu có)</Label>
+                  <Input
+                    id="companyName"
+                    value={formData.companyName}
+                    onChange={(e) => setFormData({...formData, companyName: e.target.value})}
+                    placeholder="Công ty TNHH LOOPS"
+                    className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500"
+                  />
+                </div>
+
+                <div>
                   <Label htmlFor="email" className="text-gray-200">Email *</Label>
                   <Input
                     id="email"
@@ -379,6 +393,29 @@ export default function LandingPageClient() {
           </div>
         </motion.div>
       </section>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="sm:max-w-md backdrop-blur-2xl bg-black/90 border-white/20 text-white rounded-3xl">
+          <DialogHeader className="flex flex-col items-center">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/20">
+              <Sparkles className="w-10 h-10 text-white" />
+            </div>
+            <DialogTitle className="text-2xl font-bold text-center text-white">Đăng ký thành công!</DialogTitle>
+            <DialogDescription className="text-gray-300 text-center text-lg mt-4 leading-relaxed">
+              LOOPS sẽ nhanh chóng liên hệ lại với bạn. Vui lòng kiểm tra điện thoại để nhận thông báo từ LOOPS nhé!
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center mt-6">
+            <Button 
+              onClick={() => setShowSuccessDialog(false)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 px-10 py-6 rounded-2xl font-bold"
+            >
+              Đã hiểu
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Footer */}
       <footer className="relative backdrop-blur-xl bg-white/5 border-t border-white/10 py-8 mt-20">

@@ -8,15 +8,16 @@ generator client {
 }
 
 model Registration {
-  id         String   @id @default(cuid())
-  fullName   String
-  email      String
-  phone      String
-  motivation String
-  userId     Int? // Liên kết với user đã đăng nhập
-  user       User?    @relation(fields: [userId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String   @id @default(cuid())
+  fullName    String
+  companyName String? // Thêm tên doanh nghiệp (tùy chọn)
+  email       String
+  phone       String
+  motivation  String
+  userId      Int? // Liên kết với user đã đăng nhập
+  user        User?    @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model User {

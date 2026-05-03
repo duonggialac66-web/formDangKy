@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { fullName, email, phone, motivation } = body;
+    const { fullName, companyName, email, phone, motivation } = body;
 
     if (!fullName || !email || !phone || !motivation) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
     const registration = await prisma.registration.create({
       data: { 
         fullName, 
+        companyName,
         email, 
         phone, 
         motivation,
