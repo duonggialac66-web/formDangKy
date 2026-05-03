@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 import { ArrowLeft, Sparkles, Calendar, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
