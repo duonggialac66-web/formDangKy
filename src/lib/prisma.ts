@@ -4,11 +4,8 @@ import { PrismaClient } from "@/generated/prisma";
 
 // Prisma 7.7.0 configuration - Sync with phone-store
 const prismaClientSingleton = () => {
-  const connectionString = process.env.DATABASE_URL?.trim();
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is missing");
-  }
-
+  const connectionString = process.env.DATABASE_URL?.trim() || "postgres://localhost:5432/placeholder";
+  
   const adapter = new PrismaNeonHttp(connectionString, {
     fetchOptions: {
       cache: 'no-store'
