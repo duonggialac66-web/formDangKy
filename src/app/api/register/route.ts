@@ -20,28 +20,27 @@ import { authOptions } from "@/lib/auth";
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json({ error: "Vui lòng đăng nhập để thực hiện đăng ký" }, { status: 401 });
-    }
-
     const body = await req.json();
-    const { fullName, companyName, email, phone, motivation } = body;
+    const { fullName, email, phone, companyName, motivation } = body;
 
-    if (!fullName || !email || !phone || !motivation) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!fullName || !phone) {
+      return NextResponse.json({ error: "Vui lòng nhập đầy đủ Họ tên và Số điện thoại" }, { status: 400 });
     }
+
+    const userId = session?.user?.id ? parseInt(session.user.id) : null;
 
     const registration = await prisma.registration.create({
       data: { 
         fullName, 
-        companyName,
         email, 
         phone, 
+        companyName,
         motivation,
-        userId: parseInt(session.user.id)
+        userId: userId && !isNaN(userId) ? userId : null
       },
     });
 
+    // Sync to Google Sheets if configured
     return NextResponse.json(registration, { status: 201 });
   } catch (error) {
     console.error("Registration error:", error);

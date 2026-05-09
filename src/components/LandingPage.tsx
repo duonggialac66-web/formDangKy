@@ -52,13 +52,21 @@ export default function LandingPageClient() {
   const [content, setContent] = useState<PageContent>(defaultContent);
   const [formData, setFormData] = useState({
     fullName: "",
-    companyName: "",
     email: "",
     phone: "",
-    motivation: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+
+  useEffect(() => {
+    if (session?.user) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: session.user.name || prev.fullName,
+        email: session.user.email || prev.email,
+      }));
+    }
+  }, [session]);
 
   useEffect(() => {
     // Load page content from API (server database)
@@ -89,10 +97,8 @@ export default function LandingPageClient() {
         setShowSuccessDialog(true);
         setFormData({
           fullName: "",
-          companyName: "",
           email: "",
           phone: "",
-          motivation: ""
         });
       } else {
         toast.error("Có lỗi xảy ra. Vui lòng thử lại.");
@@ -122,9 +128,9 @@ export default function LandingPageClient() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="relative z-10 backdrop-blur-xl bg-white/5 border-b border-white/10"
+        className="sticky top-0 z-50 backdrop-blur-xl bg-white/5 border-b border-white/10"
       >
-        <div className="container mx-auto px-4 py-5">
+        <div className="max-w-7xl mx-auto px-4 py-5">
           <div className="flex items-center justify-between">
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -140,17 +146,17 @@ export default function LandingPageClient() {
                 <p className="text-xs text-gray-400">{content.headerSubtitle}</p>
               </div>
             </motion.div>
-            <div className="flex items-center gap-6">
+
+            <div className="flex items-center gap-4 sm:gap-6">
               <a
                 href="https://www.loops.vn/vi"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2 group"
+                className="text-sm text-gray-400 hover:text-white transition-colors hidden md:flex items-center gap-2 group"
               >
                 <Info className="w-4 h-4 group-hover:text-purple-400 transition-colors" />
-                <span className="hidden sm:inline">Về chúng tôi</span>
+                <span>Về chúng tôi</span>
               </a>
-
               {session ? (
                 <>
                   {session.user.isAdmin && (
@@ -159,7 +165,7 @@ export default function LandingPageClient() {
                       className="text-sm text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20"
                     >
                       <LayoutDashboard className="w-4 h-4" />
-                      Dashboard
+                      Admin
                     </Link>
                   )}
                   <div className="flex items-center gap-3 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
@@ -180,13 +186,20 @@ export default function LandingPageClient() {
                   </button>
                 </>
               ) : (
-                <Link
-                  href="/login"
-                  className="flex items-center gap-2 px-6 py-2 rounded-full bg-white text-black font-semibold hover:bg-gray-200 transition-all"
-                >
-                  <LogIn className="w-4 h-4" />
-                  Đăng nhập
-                </Link>
+                <>
+                  <Link
+                    href="/login"
+                    className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:text-white transition-all text-sm"
+                  >
+                    Đăng nhập
+                  </Link>
+                  <button
+                    onClick={() => document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-600 text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] text-sm"
+                  >
+                    Đăng ký ngay
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -194,7 +207,7 @@ export default function LandingPageClient() {
       </motion.header>
 
       {/* Hero Section with 3D */}
-      <section className="relative container mx-auto px-4 py-20 lg:py-32">
+      <section className="relative max-w-7xl mx-auto px-4 py-20 lg:py-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
             initial={{ x: -100, opacity: 0 }}
@@ -223,15 +236,15 @@ export default function LandingPageClient() {
               {content.heroDescription}
             </p>
 
-            <motion.a
-              href="#register"
+            <motion.button
+              onClick={() => document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' })}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg shadow-purple-500/50"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg shadow-purple-500/50 text-white font-bold"
             >
               <span>Đăng ký ngay</span>
               <ArrowRight className="w-5 h-5" />
-            </motion.a>
+            </motion.button>
           </motion.div>
 
           <motion.div
@@ -248,7 +261,7 @@ export default function LandingPageClient() {
       </section>
 
       {/* Benefits Section */}
-      <section className="relative container mx-auto px-4 py-20">
+      <section className="relative max-w-7xl mx-auto px-4 py-20">
         <motion.h2
           initial={{ y: 50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
@@ -289,7 +302,7 @@ export default function LandingPageClient() {
       </section>
 
       {/* Registration Form */}
-      <section id="register" className="relative container mx-auto px-4 py-20">
+      <section id="register" className="relative max-w-7xl mx-auto px-4 py-20">
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
@@ -305,98 +318,57 @@ export default function LandingPageClient() {
             </h2>
             <p className="mb-8 text-gray-300">{content.formDescription}</p>
 
-            {session ? (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <Label htmlFor="fullName" className="text-gray-200">Họ và tên *</Label>
-                  <Input
-                    id="fullName"
-                    value={formData.fullName}
-                    onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                    required
-                    placeholder="Nguyễn Văn A"
-                    className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="companyName" className="text-gray-200">Tên doanh nghiệp (Nếu có)</Label>
-                  <Input
-                    id="companyName"
-                    value={formData.companyName}
-                    onChange={(e) => setFormData({...formData, companyName: e.target.value})}
-                    placeholder="Công ty TNHH LOOPS"
-                    className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="email" className="text-gray-200">Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    required
-                    placeholder="email@example.com"
-                    className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="phone" className="text-gray-200">Số điện thoại *</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    required
-                    placeholder="0912345678"
-                    className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="motivation" className="text-gray-200">Lý do muốn tham gia *</Label>
-                  <Textarea
-                    id="motivation"
-                    value={formData.motivation}
-                    onChange={(e) => setFormData({...formData, motivation: e.target.value})}
-                    required
-                    placeholder="Chia sẻ động lực của bạn..."
-                    rows={4}
-                    className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 resize-none"
-                  />
-                </div>
-
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white py-6 rounded-xl shadow-lg shadow-purple-500/50"
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      {isSubmitting ? "Đang gửi..." : "Gửi đăng ký"}
-                      <ArrowRight className="w-5 h-5" />
-                    </span>
-                  </Button>
-                </motion.div>
-              </form>
-            ) : (
-              <div className="text-center py-10 space-y-6">
-                <div className="mx-auto w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                  <LockIcon className="w-8 h-8 text-gray-500" />
-                </div>
-                <p className="text-gray-400">Bạn cần đăng nhập để thực hiện đăng ký tham gia chương trình</p>
-                <Link
-                  href="/login"
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-black font-bold hover:bg-gray-200 transition-all"
-                >
-                  Đăng nhập ngay
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <Label htmlFor="fullName" className="text-gray-200">Họ và tên *</Label>
+                <Input
+                  id="fullName"
+                  value={formData.fullName}
+                  onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                  required
+                  placeholder="Nguyễn Văn A"
+                  className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500"
+                />
               </div>
-            )}
+
+              <div>
+                <Label htmlFor="email" className="text-gray-200">Email (Không bắt buộc)</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  placeholder="email@example.com"
+                  className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="phone" className="text-gray-200">Số điện thoại *</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  required
+                  placeholder="0912345678"
+                  className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500"
+                />
+              </div>
+
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-600 hover:from-purple-500 hover:via-fuchsia-400 hover:to-pink-500 text-white py-7 rounded-2xl shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] transition-all duration-300 font-bold text-lg"
+                >
+                  <span className="flex items-center justify-center gap-3">
+                    {isSubmitting ? "Đang xử lý..." : "Xác nhận đăng ký"}
+                    <ArrowRight className="w-6 h-6" />
+                  </span>
+                </Button>
+              </motion.div>
+            </form>
           </div>
         </motion.div>
       </section>
@@ -426,7 +398,7 @@ export default function LandingPageClient() {
 
       {/* Footer */}
       <footer className="relative backdrop-blur-xl bg-white/5 border-t border-white/10 py-8 mt-20">
-        <div className="container mx-auto px-4 text-center text-sm text-gray-400">
+        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-400">
           <p>© 2026 LOOPS. Tất cả quyền được bảo lưu.</p>
         </div>
       </footer>

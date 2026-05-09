@@ -10,10 +10,10 @@ generator client {
 model Registration {
   id         String   @id @default(cuid())
   fullName   String
-  companyName String? // Thêm tên doanh nghiệp (tùy chọn)
-  email      String
+  companyName String?
+  email      String?
   phone      String
-  motivation String
+  motivation String?
   userId     Int?     // Liên kết với user đã đăng nhập
   user       User?    @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())

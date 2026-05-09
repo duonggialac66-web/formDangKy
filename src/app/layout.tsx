@@ -50,6 +50,7 @@ export const metadata: Metadata = {
   },
 };
 
+import { Toaster } from "sonner";
 import { AuthProvider } from "@/components/providers/session-provider";
 
 export default function RootLayout({
@@ -76,6 +77,7 @@ export default function RootLayout({
       <body style={{ height: "100%", margin: 0 }}>
         <AuthProvider>
           {children}
+          <Toaster position="top-center" richColors />
         </AuthProvider>
       </body>
     </html>
